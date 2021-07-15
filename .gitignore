@@ -1,0 +1,8 @@
+.envrc
+*output*
+*cache*
+archive
+*.iso
+packer-manifest.json
+aws-*.json
+public

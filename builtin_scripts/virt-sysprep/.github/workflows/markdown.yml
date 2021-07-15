@@ -1,0 +1,37 @@
+name: markdown
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+    paths:
+      - '**.md'
+      - .github/workflows/markdown.yml
+  push:
+    branches:
+      - master
+    paths:
+      - '**.md'
+      - .github/workflows/markdown.yml
+
+jobs:
+  markdownlint-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Markdown Lint
+        uses: ruzickap/action-my-markdown-linter@v1
+        with:
+          exclude: |
+            CHANGELOG.md
+
+  markdown-link-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Link Checker
+        uses: ruzickap/action-my-markdown-link-checker@v1
+        with:
+          exclude: |
+            CHANGELOG.md

@@ -1,0 +1,6 @@
+[submodule "sift-saltstack"]
+	path = sift-saltstack
+	url = https://github.com/teamdfir/sift-saltstack
+[submodule "builtin_scripts/virt-sysprep"]
+	path = builtin_scripts/virt-sysprep
+	url = https://github.com/ruzickap/packer-virt-sysprep.git

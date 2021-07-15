@@ -1,0 +1,35 @@
+site_name: Template Packer Linux
+site_url: https://docs.sroc.sans.services/tpl-packer-linux/
+repo_name: sans-sroc/tpl-packer-linux
+repo_url: https://github.com/sans-sroc/tpl-packer-linux
+edit_uri: ""
+
+site_dir: public
+
+theme:
+  name: material
+  language: en
+  palette:
+    scheme: preference
+    primary: blue
+    accent: indigo
+  features:
+    - navigation.sections
+    - navigation.tabs
+
+plugins:
+  - search
+
+markdown_extensions:
+  - admonition
+  - codehilite:
+      guess_lang: false
+  - toc:
+      permalink: true
+  - pymdownx.superfences:
+      highlight_code: true
+  - pymdownx.tabbed
+
+nav:
+  - Home:
+      - Overview: index.md
