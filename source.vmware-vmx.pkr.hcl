@@ -23,7 +23,7 @@ source "vmware-vmx" "update" {
   vm_name  = var.name
   headless = "${var.headless}"
 
-  source_path      = "${var.output_directory}/${var.name}/${var.name}.vmx"
+  source_path      = "${var.output_directory}/${var.name}-vmware-iso-full/${var.name}.vmx"
   output_directory = "${var.output_directory}/${var.name}-update"
 
   shutdown_command = local.shutdown_command
