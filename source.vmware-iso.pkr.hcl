@@ -2,6 +2,8 @@
 source "vmware-iso" "preflight" {
   vm_name          = var.name
   headless         = "${var.headless}"
+  
+  guest_os_type    = "${var.guest_os_type}"
 
   output_directory = "${var.output_directory}/${var.name}-vmware-iso-preflight"
 

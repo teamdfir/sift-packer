@@ -4,6 +4,12 @@ variable "name" {
   default = "sift"
 }
 
+variable "guest_os_type" {
+  description = "The guest_os_type (default: ubuntu-64)"
+  type        = string
+  default     = "ubuntu-64"
+}
+
 variable "output_directory" {
   description = "The location to build all virtual machines to"
   type    = string
@@ -105,6 +111,7 @@ variable "aws_ami_source_filter_name" {
   description = "AWS Source AMI Filter Name"
   type        = string
   default     = "ubuntu/images/*ubuntu-focal-20.04-amd64-server-*"
+  # default     = "ubuntu/images/*ubuntu-focal-20.04-arm64-server-*"
 }
 
 variable "aws_ami_source_owner" {
@@ -117,6 +124,7 @@ variable "aws_instance_type" {
   description = "AWS Instance Type"
   type        = string
   default     = "m4.xlarge"
+  # default     = "a1.xlarge"
 }
 
 variable "aws_volume_size" {

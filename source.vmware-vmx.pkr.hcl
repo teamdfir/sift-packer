@@ -5,6 +5,8 @@ source "vmware-vmx" "full" {
   vm_name  = var.name
   headless = "${var.headless}"
 
+  guest_os_type    = "${var.guest_os_type}"
+
   source_path      = "${var.output_directory}/${local.vmware_vmx_source}-preflight/${var.name}.vmx"
   output_directory = "${var.output_directory}/${var.name}"
 
@@ -22,6 +24,8 @@ source "vmware-vmx" "full" {
 source "vmware-vmx" "update" {
   vm_name  = var.name
   headless = "${var.headless}"
+  
+  guest_os_type    = "${var.guest_os_type}"
 
   source_path      = "${var.output_directory}/${var.name}-vmware-iso-full/${var.name}.vmx"
   output_directory = "${var.output_directory}/${var.name}-update"
