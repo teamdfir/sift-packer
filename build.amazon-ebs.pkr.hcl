@@ -63,4 +63,19 @@ build {
       "${path.root}/builtin_scripts/virt-sysprep/sysprep-op-disk-space.sh",
     ]
   }
+
+  provisioner "file" {
+    content = local.cloud_config
+    destination = "/tmp/defaults.cfg"
+  }
+
+  provisioner "shell" {
+    execute_command  = "echo '${var.password}' | sudo -S env {{ .Vars }} {{ .Path }}"
+    inline = [
+      "rm -f /home/${var.username}/.ssh/authorized_keys",
+      "mv /tmp/defaults.cfg /etc/cloud/cloud.cfg.d/user_defaults.cfg",
+      "chown root:root /etc/cloud/cloud.cfg.d/user_defaults.cfg",
+      "cloud-init clean --logs --seed",
+    ]
+  }
 }

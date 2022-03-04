@@ -98,7 +98,22 @@ variable "aws_region" {
 variable "aws_regions" {
   description = "List of AWS Regions to copy the AMI to (only valid for amazon-ebs builder)"
   type = list(string)
-  default = ["us-east-1", "us-east-2", "us-west-1", "us-west-2"]
+  default = [
+    "us-east-1",
+    "us-east-2",
+    "us-west-1", 
+    "us-west-2", 
+    "eu-west-1", 
+    "eu-west-2", 
+    "eu-west-3", 
+    "eu-central-1", 
+    "eu-north-1",
+    "ap-northeast-1",
+    "ap-northeast-2",
+    "ap-northeast-3",
+    "ap-southeast-1",
+    "ap-southeast-2",
+  ]
 }
 
 variable "aws_ami" {
@@ -139,12 +154,41 @@ variable "aws_accounts" {
   default     = []
 }
 
+variable "aws_vpc_filters" {
+  description = "The filter used to select the VPC to launch AMI builders into"
+  type        = map(string)
+  default     = {}
+}
+
+variable "aws_vpc_subnet_filters" {
+  description = "The filter used to select the subnet in the VPC to launch AMI builders into"
+  type        = map(string)
+  default     = {}
+}
+
+variable "aws_tags" {
+  description = "Tags to add the the AMI image"
+  type        = map(string)
+  default     = {}
+}
+
+variable "development_mode" {
+  description = "Enable development for the build"
+  type = bool
+  default = false
+}
+
 locals {
   timestamp = formatdate("YYYY-MM-DD-hhmm", timestamp())
+
+  cloud_config = templatefile("builtin_files/cloud-config.yaml", {
+    username = var.username,
+  })
 
   user_data = templatefile("builtin_files/aws-cloud-config.yaml", {
     username = var.username,
   })
+
   ubuntu_desktop_preseed = templatefile("builtin_files/ubuntu-desktop-preseed.cfg", {
     username = var.username,
     password = var.password,
