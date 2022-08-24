@@ -2,3 +2,43 @@
 system_info:
   default_user:
     name: ${username}
+autoinstall:
+  version: 1
+  apt:
+    geoip: true
+    disable_components: []
+    preserve_sources_list: false
+    primary:
+      - arches: [amd64, i386]
+        uri: http://us.archive.ubuntu.com/ubuntu
+      - arches: [default]
+        uri: http://ports.ubuntu.com/ubuntu-ports
+  early-commands:
+    - sudo systemctl stop ssh # LEAVE! This keeps packer from erroring out on SSH auth while install is happening
+  locale: en_US
+  keyboard:
+    layout: us
+  identity:
+    hostname: ${hostname}
+    username: ${username}
+    password: ${password}
+  ssh:
+    install-server: true
+    allow-pw: true
+  packages:
+    - openssh-server
+    - open-vm-tools
+    - cloud-init
+    - whois
+    - zsh
+    - wget
+    - tasksel
+    - ubuntu-desktop
+  storage:
+    layout:
+      name: direct
+    swap:
+      size: 2GB
+  user-data:
+    disable_root: false
+    timezone: UTC

@@ -7,18 +7,15 @@ build {
   provisioner "shell" {
     execute_command = "echo '${var.password}' | sudo -S -E bash '{{ .Path }}'"
     scripts = [
-      "${path.root}/custom_scripts/nop.sh",
+      "${path.root}/custom_scripts/cast-install.sh",
     ]
   }
 
-  # Stage 4 - Saltstack
-  provisioner "salt-masterless" {
-    local_state_tree = "${path.root}/sift-saltstack"
-    skip_bootstrap   = true
-    # Uncomment this once PR () gets merged
-    # execute_command  = "echo '${var.password}' | sudo -S -E"
-    custom_state     = "sift.desktop"
-    salt_call_args   = "--state-output=terse"
+  provisioner "shell" {
+    execute_command = "echo '${var.password}' | sudo -S -E bash '{{ .Path }}'"
+    scripts = [
+      "${path.root}/custom_scripts/cast-sift.sh",
+    ]
   }
 
   # Stage X - Sysprep Scripts (Part 2)

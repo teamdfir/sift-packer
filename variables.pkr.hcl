@@ -37,7 +37,14 @@ variable "password" {
 variable "ubuntu_images_url" {
   description = "The default place to obtain the OS images from"
   type    = string
-  default = "http://archive.ubuntu.com/ubuntu/dists/focal/main/installer-amd64/current/legacy-images"
+  #default = "http://archive.ubuntu.com/ubuntu/dists/jammy/main/installer-amd64/current/legacy-images"
+  default = "https://releases.ubuntu.com/22.04.1"
+}
+
+variable "ubuntu_images_iso_filename" {
+  description = "The default filename for the server install"
+  type        = string
+  default     = "ubuntu-22.04.1-live-server-amd64.iso"
 }
 
 variable "accelerator" {
@@ -125,8 +132,7 @@ variable "aws_ami" {
 variable "aws_ami_source_filter_name" {
   description = "AWS Source AMI Filter Name"
   type        = string
-  default     = "ubuntu/images/*ubuntu-focal-20.04-amd64-server-*"
-  # default     = "ubuntu/images/*ubuntu-focal-20.04-arm64-server-*"
+  default     = "ubuntu/images/*ubuntu-focal-20.04-arm64-server-*"
 }
 
 variable "aws_ami_source_owner" {
@@ -182,7 +188,9 @@ locals {
   timestamp = formatdate("YYYY-MM-DD-hhmm", timestamp())
 
   cloud_config = templatefile("builtin_files/cloud-config.yaml", {
-    username = var.username,
+    hostname = var.name
+    username = var.username
+    password = bcrypt(var.password)
   })
 
   user_data = templatefile("builtin_files/aws-cloud-config.yaml", {
@@ -195,17 +203,19 @@ locals {
   })
 
   boot_command = [
-    "<tab>",
-    "url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed ",
-    "auto=true ",
-    "net.ifnames=0 ",
-    "hostname=localhost ",
-    "<enter>",
+    "c<wait>",
+    "linux /casper/vmlinuz --- autoinstall ds=\"nocloud-net;seedfrom=http://{{.HTTPIP}}:{{.HTTPPort}}/\"",
+    "<enter><wait>",
+    "initrd /casper/initrd",
+    "<enter><wait>",
+    "boot",
+    "<enter>"
   ]
+
   shutdown_command = "echo '${var.password}' | sudo -S shutdown -P now"
 
   iso_checksum = "file:${var.ubuntu_images_url}/SHA256SUMS"
-  iso_urls     = ["${var.ubuntu_images_url}/netboot/mini.iso"]
+  iso_urls     = ["${var.ubuntu_images_url}/${var.ubuntu_images_iso_filename}"]
 
   script_environment_variables = [
     "DEBIAN_FRONTEND=noninteractive",
