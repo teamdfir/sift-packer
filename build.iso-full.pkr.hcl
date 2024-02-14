@@ -20,7 +20,7 @@ build {
       "${path.root}/builtin_scripts/ubuntu/system-update.sh",
       "${path.root}/builtin_scripts/ubuntu/open-vm-tools.sh",
       "${path.root}/builtin_scripts/ubuntu/virtualbox-guest-x11.sh",
-      "${path.root}/builtin_scripts/ubuntu/setup-saltstack.sh",
+      #"${path.root}/builtin_scripts/ubuntu/setup-saltstack.sh",
       # Note: once https://github.com/hashicorp/packer/pull/10945 is merged, configure
       # sudo becomes optional and or purely a user experience option
       "${path.root}/builtin_scripts/ubuntu/configure-sudo.sh",
@@ -38,13 +38,13 @@ build {
   }
 
   # Stage 4 - Saltstack
-  provisioner "salt-masterless" {
-    local_state_tree = "${path.root}/sift-saltstack"
-    skip_bootstrap   = true
-    # Uncomment this once PR () gets merged
-    # execute_command  = "echo '${var.password}' | sudo -S -E"
-    custom_state     = "sift.desktop"
-    salt_call_args   = "--state-output=terse"
+  provisioner "shell" {
+    execute_command = "echo '${var.password}' | sudo -S -E bash '{{ .Path }}'"
+    scripts = [
+      "${path.root}/custom_scripts/cast-install.sh",
+      "${path.root}/custom_scripts/cast-sift.sh",
+      "${path.root}/custom_scripts/cast-clean.sh",
+    ]
   }
 
   # Stage X - Sysprep Scripts (Part 2)
@@ -52,7 +52,7 @@ build {
   provisioner "shell" {
     execute_command = "echo '${var.password}' | sudo -S -E bash '{{ .Path }}'"
     scripts = [
-      "${path.root}/builtin_scripts/ubuntu/clean-saltstack.sh",
+      #"${path.root}/builtin_scripts/ubuntu/clean-saltstack.sh",
       "${path.root}/builtin_scripts/virt-sysprep/sysprep-op-dhcp-client-state.sh",
       "${path.root}/builtin_scripts/virt-sysprep/sysprep-op-logfiles.sh",
       "${path.root}/builtin_scripts/virt-sysprep/sysprep-op-machine-id.sh",

@@ -20,7 +20,7 @@ build {
       "${path.root}/builtin_scripts/ubuntu/system-update.sh",
       "${path.root}/builtin_scripts/ubuntu/open-vm-tools.sh",
       "${path.root}/builtin_scripts/ubuntu/virtualbox-guest-x11.sh",
-      "${path.root}/builtin_scripts/ubuntu/setup-saltstack.sh",
+      #"${path.root}/builtin_scripts/ubuntu/setup-saltstack.sh",
       # Note: once https://github.com/hashicorp/packer/pull/10945 is merged, configure
       # sudo becomes optional and or purely a user experience option
       "${path.root}/builtin_scripts/ubuntu/configure-sudo.sh",

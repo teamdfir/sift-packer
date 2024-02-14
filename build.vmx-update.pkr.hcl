@@ -1,14 +1,23 @@
 build {
   sources = ["source.vmware-vmx.update"]
 
-  # Stage 4 - Saltstack
-  provisioner "salt-masterless" {
-    local_state_tree = "${path.root}/sift-saltstack"
-    skip_bootstrap   = true
-    # Uncomment this once PR () gets merged
-    # execute_command  = "echo '${var.password}' | sudo -S -E"
-    custom_state     = "sift.desktop"
-    salt_call_args   = "--state-output=terse"
+  provisioner "shell" {
+    # Note: sudo -S env is necessary ot pass the environment variables down to each script
+    execute_command  = "echo '${var.password}' | sudo -S env {{ .Vars }} {{ .Path }}"
+    environment_vars = local.script_environment_variables
+    scripts = [
+      "${path.root}/builtin_scripts/ubuntu/disable-aptdaily.sh",
+      "${path.root}/builtin_scripts/ubuntu/system-update.sh",
+    ]
+  }
+
+  provisioner "shell" {
+    execute_command = "echo '${var.password}' | sudo -S -E bash '{{ .Path }}'"
+    scripts = [
+      "${path.root}/custom_scripts/cast-install.sh",
+      "${path.root}/custom_scripts/cast-sift.sh",
+      "${path.root}/custom_scripts/cast-clean.sh",
+    ]
   }
 
   # Stage X - Sysprep Scripts (Part 2)
@@ -16,7 +25,6 @@ build {
   provisioner "shell" {
     execute_command = "echo '${var.password}' | sudo -S -E bash '{{ .Path }}'"
     scripts = [
-      "${path.root}/builtin_scripts/ubuntu/clean-saltstack.sh",
       "${path.root}/builtin_scripts/virt-sysprep/sysprep-op-dhcp-client-state.sh",
       "${path.root}/builtin_scripts/virt-sysprep/sysprep-op-logfiles.sh",
       "${path.root}/builtin_scripts/virt-sysprep/sysprep-op-machine-id.sh",
