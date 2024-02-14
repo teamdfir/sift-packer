@@ -132,7 +132,7 @@ variable "aws_ami" {
 variable "aws_ami_source_filter_name" {
   description = "AWS Source AMI Filter Name"
   type        = string
-  default     = "ubuntu/images/*ubuntu-focal-20.04-arm64-server-*"
+  default     = "ubuntu/images/*ubuntu-jammy-22.04-amd64-server-*"
 }
 
 variable "aws_ami_source_owner" {

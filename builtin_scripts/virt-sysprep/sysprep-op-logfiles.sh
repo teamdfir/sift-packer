@@ -28,6 +28,26 @@
 # See https://github.com/libguestfs/libguestfs/tree/master/sysprep
 set -o errexit
 
+function retry {
+  local retries=$1
+  shift
+
+  local count=0
+  until "$@"; do
+    exit=$?
+    wait=$((2 ** $count))
+    count=$(($count + 1))
+    if [ $count -lt $retries ]; then
+      echo "Retry $count/$retries exited $exit, retrying in $wait seconds..."
+      sleep $wait
+    else
+      echo "Retry $count/$retries exited $exit, no more retries left."
+      return $exit
+    fi
+  done
+  return 0
+}
+
 # Absolute path to guest log file directories
 # All files under the given directories will be removed
 logd_locations=(
@@ -204,7 +224,7 @@ do
                 touch "${lastlog}"
             fi
             # Cleanup
-            umount ${mntpnt_orig_logd} && rm -rf ${mntpnt_orig_logd}
+            retry 10 umount ${mntpnt_orig_logd} && rm -rf ${mntpnt_orig_logd}
         fi
     fi
 done

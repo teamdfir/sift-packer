@@ -8,13 +8,8 @@ build {
     execute_command = "echo '${var.password}' | sudo -S -E bash '{{ .Path }}'"
     scripts = [
       "${path.root}/custom_scripts/cast-install.sh",
-    ]
-  }
-
-  provisioner "shell" {
-    execute_command = "echo '${var.password}' | sudo -S -E bash '{{ .Path }}'"
-    scripts = [
       "${path.root}/custom_scripts/cast-sift.sh",
+      "${path.root}/custom_scripts/cast-clean.sh",
     ]
   }
 
@@ -23,7 +18,6 @@ build {
   provisioner "shell" {
     execute_command = "echo '${var.password}' | sudo -S -E bash '{{ .Path }}'"
     scripts = [
-      "${path.root}/builtin_scripts/ubuntu/clean-saltstack.sh",
       "${path.root}/builtin_scripts/virt-sysprep/sysprep-op-dhcp-client-state.sh",
       "${path.root}/builtin_scripts/virt-sysprep/sysprep-op-logfiles.sh",
       "${path.root}/builtin_scripts/virt-sysprep/sysprep-op-machine-id.sh",

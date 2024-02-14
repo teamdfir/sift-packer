@@ -1,6 +1,6 @@
 
 source "vmware-iso" "preflight" {
-  vm_name          = var.name
+  vm_name          = "${var.name}-preflight"
   headless         = "${var.headless}"
   
   guest_os_type    = "${var.guest_os_type}"
@@ -44,10 +44,11 @@ source "vmware-iso" "full" {
   iso_checksum     = local.iso_checksum
   iso_urls         = local.iso_urls
 
-  ssh_username     = var.username
-  ssh_password     = var.password
-  ssh_pty          = false
-  ssh_wait_timeout = "10000s"
+  ssh_username           = var.username
+  ssh_password           = var.password
+  ssh_pty                = false
+	ssh_timeout            = "20m"
+  ssh_handshake_attempts = 100  
   
   disk_size    = var.disk_size
   disk_type_id = var.vmware_disk_type_id
@@ -55,7 +56,8 @@ source "vmware-iso" "full" {
   memory       = var.memory
 
   http_content = {
-    "/preseed" = local.ubuntu_desktop_preseed
+    "/meta-data" = ""
+    "/user-data" = local.cloud_config
   }
 }
 

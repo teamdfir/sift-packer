@@ -34,11 +34,25 @@ autoinstall:
     - wget
     - tasksel
     - ubuntu-desktop
-  storage:
-    layout:
-      name: direct
-    swap:
-      size: 2GB
+  source:
+    id: ubuntu-server-minimal
   user-data:
+    system_info:
+      default_user:
+        name: ${username}
     disable_root: false
     timezone: UTC
+    write_files:
+      - path: /etc/gdm3/custom.conf
+        content: |
+          [daemon]
+          AutomaticLoginEnable = true
+          AutomaticLogin = ${username}
+
+          [security]
+
+          [xdmcp]
+
+          [chooser]
+
+          [debug]
