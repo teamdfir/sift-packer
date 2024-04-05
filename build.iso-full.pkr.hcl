@@ -1,5 +1,5 @@
 build {
-  sources = ["source.virtualbox-iso.full", "source.vmware-iso.full"]
+  sources = ["source.vmware-iso.full"]
 
   # Stage 0 - First Run Scripts
   # This disables the welcome screen from the default user
@@ -67,7 +67,7 @@ build {
   post-processors {
     post-processor "shell-local" {
       # || true so if there is an error it doesn't fail and clean up the built VM
-      inline = ["ovftool ${var.output_directory}/${var.name}-vmvware-iso-full/${var.name}.vmx ${var.output_directory}/${var.name}-${local.timestamp}.ova || true"]
+      inline = ["ovftool ${var.output_directory}/${var.name}-vmware-iso-full/${var.name}.vmx ${var.output_directory}/${var.name}-${local.timestamp}.ova || true"]
     }
   }
 }
