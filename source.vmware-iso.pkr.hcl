@@ -3,7 +3,7 @@ source "vmware-iso" "preflight" {
   vm_name          = "${var.name}-preflight"
   headless         = "${var.headless}"
   
-  guest_os_type    = "${var.guest_os_type}"
+  guest_os_type    = "${local.guest_os_type}"
 
   output_directory = "${var.output_directory}/${var.name}-vmware-iso-preflight"
 
@@ -17,7 +17,7 @@ source "vmware-iso" "preflight" {
   ssh_username           = var.username
   ssh_password           = var.password
   ssh_pty                = false
-	ssh_timeout            = "20m"
+	ssh_timeout            = "40m"
   ssh_handshake_attempts = 100  
   
   disk_size    = var.disk_size
@@ -47,7 +47,7 @@ source "vmware-iso" "full" {
   ssh_username           = var.username
   ssh_password           = var.password
   ssh_pty                = false
-	ssh_timeout            = "20m"
+	ssh_timeout            = "60m"
   ssh_handshake_attempts = 100  
   
   disk_size    = var.disk_size

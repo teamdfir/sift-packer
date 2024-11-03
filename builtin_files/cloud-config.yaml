@@ -1,7 +1,4 @@
 #cloud-config
-system_info:
-  default_user:
-    name: ${username}
 autoinstall:
   version: 1
   apt:
@@ -13,8 +10,9 @@ autoinstall:
         uri: http://us.archive.ubuntu.com/ubuntu
       - arches: [default]
         uri: http://ports.ubuntu.com/ubuntu-ports
+  # LEAVE! This keeps packer from erroring out on SSH auth while install is happening
   early-commands:
-    - sudo systemctl stop ssh # LEAVE! This keeps packer from erroring out on SSH auth while install is happening
+    - sudo systemctl stop ssh
   locale: en_US
   keyboard:
     layout: us
@@ -24,7 +22,7 @@ autoinstall:
     password: ${password}
   ssh:
     install-server: true
-    allow-pw: true
+    allow-pw: yes
   packages:
     - openssh-server
     - open-vm-tools
@@ -37,9 +35,6 @@ autoinstall:
   source:
     id: ubuntu-server-minimal
   user-data:
-    system_info:
-      default_user:
-        name: ${username}
     disable_root: false
     timezone: UTC
     write_files:
@@ -56,3 +51,13 @@ autoinstall:
           [chooser]
 
           [debug]
+system_info:
+  users:
+    - default
+  default_user:
+    name: ${username}
+    lock_passwd: True
+    gecos: DefaultUser
+    groups: [adm, audio, cdrom, dialout, dip, floppy, lxd, netdev, plugdev, sudo, video]
+    sudo: ["ALL=(ALL) NOPASSWD:ALL"]
+    shell: /bin/bash

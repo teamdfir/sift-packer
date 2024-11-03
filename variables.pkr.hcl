@@ -4,12 +4,6 @@ variable "name" {
   default = "sift"
 }
 
-variable "guest_os_type" {
-  description = "The guest_os_type (default: ubuntu-64)"
-  type        = string
-  default     = "ubuntu-64"
-}
-
 variable "output_directory" {
   description = "The location to build all virtual machines to"
   type    = string
@@ -34,29 +28,38 @@ variable "password" {
   default = "forensics"
 }
 
+variable "arch" {
+  description = "The architecture of the OS to build"
+  type    = string
+  default = "amd64"
+}
+
+variable "ubuntu_version" {
+  description = "The version of Ubuntu to use"
+  type    = string
+  default = "22.04.5"
+}
+
+// Note: this is so you can specifically override the ISO file, otherwise it will be calculated
+// based on the ubuntu_version and arch
 variable "ubuntu_images_url" {
   description = "The default place to obtain the OS images from"
   type    = string
-  #default = "http://archive.ubuntu.com/ubuntu/dists/jammy/main/installer-amd64/current/legacy-images"
-  default = "https://releases.ubuntu.com/22.04.1"
+  default = ""
 }
 
+// Note: this is so you can specifically override the ISO file, otherwise it will be calculated
+// based on the ubuntu_version and arch
 variable "ubuntu_images_iso_filename" {
   description = "The default filename for the server install"
   type        = string
-  default     = "ubuntu-22.04.1-live-server-amd64.iso"
-}
-
-variable "accelerator" {
-  description = "The accelerator to use, only useful with QEMU builds"
-  type        = string
-  default     = "kvm"
+  default = ""
 }
 
 variable "headless" {
   description = "Whether or not to build the VM headless"
   type        = string
-  default     = "false"
+  default     = "true"
 }
 
 variable "cpus" {
@@ -123,16 +126,20 @@ variable "aws_regions" {
   ]
 }
 
+// Note: this is so you can specifically override the AMI, otherwise it will be calculated
+// based on the ubuntu_version and arch
 variable "aws_ami" {
   description = "AWS Base AMI to build on top of (leave empty for source_filter to be used)"
   type        = string
   default     = ""
 }
 
+// Note: this is so you can specifically override the AMI source filter, otherwise it will be calculated
+// based on the ubuntu_version and arch
 variable "aws_ami_source_filter_name" {
   description = "AWS Source AMI Filter Name"
   type        = string
-  default     = "ubuntu/images/*ubuntu-jammy-22.04-amd64-server-*"
+  default     = ""
 }
 
 variable "aws_ami_source_owner" {
@@ -141,11 +148,12 @@ variable "aws_ami_source_owner" {
   default     = ["099720109477"]
 }
 
+// Note: this is so you can specifically override the EC2 Instance type, otherwise it will be calculated
+// based on the architecture specified.
 variable "aws_instance_type" {
   description = "AWS Instance Type"
   type        = string
-  default     = "m4.xlarge"
-  # default     = "a1.xlarge"
+  default     = ""
 }
 
 variable "aws_volume_size" {
@@ -214,8 +222,18 @@ locals {
 
   shutdown_command = "echo '${var.password}' | sudo -S shutdown -P now"
 
-  iso_checksum = "file:${var.ubuntu_images_url}/SHA256SUMS"
-  iso_urls     = ["${var.ubuntu_images_url}/${var.ubuntu_images_iso_filename}"]
+  ubuntu_version_parts = split(".", var.ubuntu_version)
+  ubuntu_version_short = "${element(local.ubuntu_version_parts, 0)}.${element(local.ubuntu_version_parts, 1)}"
+
+  aws_instance_prefix = var.arch == "arm64" ? "a1" : "m5"
+  aws_instance_type = var.aws_instance_type != "" ? var.aws_instance_type : "${local.aws_instance_prefix}.xlarge"
+  aws_ami_filter_name = var.aws_ami_source_filter_name != "" ? var.aws_ami_source_filter_name : "ubuntu/images/*ubuntu-${local.ubuntu_version_short}-${var.arch}-server-*"
+
+  ubuntu_images_url = var.ubuntu_images_url != "" ? var.ubuntu_images_url : "https://releases.ubuntu.com/${local.ubuntu_version_short}"
+  ubuntu_images_iso_filename = var.ubuntu_images_iso_filename != "" ? var.ubuntu_images_iso_filename : "ubuntu-${var.ubuntu_version}-live-server-${var.arch}.iso"
+
+  iso_checksum = "file:${local.ubuntu_images_url}/SHA256SUMS"
+  iso_urls     = ["${local.ubuntu_images_url}/${local.ubuntu_images_iso_filename}"]
 
   script_environment_variables = [
     "DEBIAN_FRONTEND=noninteractive",
@@ -227,4 +245,6 @@ locals {
   ]
 
   vmware_vmx_source = var.source_directory != "" ? var.source_directory : "${var.name}-vmware-iso"
+
+  guest_os_type = "ubuntu-64"
 }
