@@ -35,11 +35,11 @@ source "amazon-ebs" "full" {
 
   source_ami_filter {
     filters = {
-       virtualization-type = "hvm"
-       name = local.aws_ami_filter_name
-       root-device-type = "ebs"
+      virtualization-type = "hvm"
+      name                = local.aws_ami_filter_name
+      root-device-type    = "ebs"
     }
-    owners = var.aws_ami_source_owner
+    owners      = var.aws_ami_source_owner
     most_recent = true
   }
 

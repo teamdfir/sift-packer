@@ -13,7 +13,7 @@ build {
     inline = [
       "mkdir -p /home/${var.username}/.config/",
       "touch /home/${var.username}/.config/gnome-initial-setup-done",
-    ]    
+    ]
   }
 
   # Stage 1 - Ubuntu Tweak Scripts
@@ -24,6 +24,7 @@ build {
     scripts = [
       "${path.root}/builtin_scripts/ubuntu/disable-aptdaily.sh",
       "${path.root}/builtin_scripts/ubuntu/system-update.sh",
+      "${path.root}/builtin_scripts/ubuntu/faster-boot.sh",
       "${path.root}/builtin_scripts/ubuntu/open-vm-tools.sh",
       "${path.root}/builtin_scripts/ubuntu/virtualbox-guest-x11.sh",
       # Note: once https://github.com/hashicorp/packer/pull/10945 is merged, configure
@@ -45,12 +46,12 @@ build {
   }
 
   provisioner "file" {
-    content = local.user_data
+    content     = local.user_data
     destination = "/tmp/defaults.cfg"
   }
 
   provisioner "shell" {
-    execute_command  = "echo '${var.password}' | sudo -S env {{ .Vars }} {{ .Path }}"
+    execute_command = "echo '${var.password}' | sudo -S env {{ .Vars }} {{ .Path }}"
     inline = [
       "rm -f /home/${var.username}/.ssh/authorized_keys",
       "cloud-init clean --logs --machine-id",

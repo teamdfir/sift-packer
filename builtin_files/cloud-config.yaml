@@ -1,4 +1,12 @@
 #cloud-config
+system_info:
+  default_user:
+    name: ${username}
+    lock_passwd: True
+    gecos: DefaultUser
+    groups: [adm, audio, cdrom, dialout, dip, floppy, lxd, netdev, plugdev, sudo, video]
+    sudo: ["ALL=(ALL) NOPASSWD:ALL"]
+    shell: /bin/bash
 autoinstall:
   version: 1
   apt:
@@ -10,10 +18,9 @@ autoinstall:
         uri: http://us.archive.ubuntu.com/ubuntu
       - arches: [default]
         uri: http://ports.ubuntu.com/ubuntu-ports
-  # LEAVE! This keeps packer from erroring out on SSH auth while install is happening
-  early-commands:
-    - sudo systemctl stop ssh
   locale: en_US
+  early-commands:
+    - systemctl mask systemd-networkd-wait-online.service
   keyboard:
     layout: us
   identity:
@@ -51,13 +58,11 @@ autoinstall:
           [chooser]
 
           [debug]
-system_info:
-  users:
-    - default
-  default_user:
-    name: ${username}
-    lock_passwd: True
-    gecos: DefaultUser
-    groups: [adm, audio, cdrom, dialout, dip, floppy, lxd, netdev, plugdev, sudo, video]
-    sudo: ["ALL=(ALL) NOPASSWD:ALL"]
-    shell: /bin/bash
+      - path: /etc/systemd/system/ssh.socket.d/override.conf
+        content: |
+          [Socket]
+
+          ListenStream=
+          ListenStream=2222
+    runcmd:
+      - systemctl restart ssh.socket

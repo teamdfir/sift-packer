@@ -5,7 +5,8 @@ build {
   # This section is for scripts that are added custom to the packer build not included
   # by the template, these can be anything that needs to happen to prepare the system
   provisioner "shell" {
-    execute_command = "echo '${var.password}' | sudo -S -E bash '{{ .Path }}'"
+    execute_command  = local.execute_command
+    environment_vars = local.script_environment_variables
     scripts = [
       "${path.root}/custom_scripts/cast-install.sh",
       "${path.root}/custom_scripts/cast-sift.sh",
@@ -16,7 +17,7 @@ build {
   # Stage X - Sysprep Scripts (Part 2)
   # Final Scripts, the last scripts that should be run.
   provisioner "shell" {
-    execute_command = "echo '${var.password}' | sudo -S -E bash '{{ .Path }}'"
+    execute_command = local.execute_command
     scripts = [
       "${path.root}/builtin_scripts/virt-sysprep/sysprep-op-dhcp-client-state.sh",
       "${path.root}/builtin_scripts/virt-sysprep/sysprep-op-logfiles.sh",

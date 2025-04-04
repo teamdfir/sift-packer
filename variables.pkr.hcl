@@ -1,51 +1,51 @@
 variable "name" {
   description = "The name of the virtual machine"
-  type    = string
-  default = "sift"
+  type        = string
+  default     = "sift"
 }
 
 variable "output_directory" {
   description = "The location to build all virtual machines to"
-  type    = string
-  default = "_outputs"
+  type        = string
+  default     = "_outputs"
 }
 
 variable "source_directory" {
   description = "The location to source a VMX from, leave blank for calculated"
-  type = string
-  default = ""
+  type        = string
+  default     = ""
 }
 
 variable "username" {
   description = "The default username for the OS"
-  type    = string
-  default = "sansforensics"
+  type        = string
+  default     = "sansforensics"
 }
 
 variable "password" {
   description = "The password for the the default user for the OS"
-  type    = string
-  default = "forensics"
+  type        = string
+  default     = "forensics"
 }
 
 variable "arch" {
   description = "The architecture of the OS to build"
-  type    = string
-  default = "amd64"
+  type        = string
+  default     = "amd64"
 }
 
 variable "ubuntu_version" {
   description = "The version of Ubuntu to use"
-  type    = string
-  default = "22.04.5"
+  type        = string
+  default     = "24.04.2"
 }
 
 // Note: this is so you can specifically override the ISO file, otherwise it will be calculated
 // based on the ubuntu_version and arch
 variable "ubuntu_images_url" {
   description = "The default place to obtain the OS images from"
-  type    = string
-  default = ""
+  type        = string
+  default     = ""
 }
 
 // Note: this is so you can specifically override the ISO file, otherwise it will be calculated
@@ -53,7 +53,7 @@ variable "ubuntu_images_url" {
 variable "ubuntu_images_iso_filename" {
   description = "The default filename for the server install"
   type        = string
-  default = ""
+  default     = ""
 }
 
 variable "headless" {
@@ -87,36 +87,36 @@ variable "vmware_disk_type_id" {
 }
 
 variable "http_proxy" {
-  type = string
+  type    = string
   default = ""
 }
 variable "https_proxy" {
-  type = string
+  type    = string
   default = ""
 }
 variable "no_proxy" {
-  type = string
+  type    = string
   default = ""
 }
 
 variable "aws_region" {
   description = "AWS Region to use by default for any AMI or EBS Builds"
-  type = string
-  default = "us-east-2"
+  type        = string
+  default     = "us-east-2"
 }
 
 variable "aws_regions" {
   description = "List of AWS Regions to copy the AMI to (only valid for amazon-ebs builder)"
-  type = list(string)
+  type        = list(string)
   default = [
     "us-east-1",
     "us-east-2",
-    "us-west-1", 
-    "us-west-2", 
-    "eu-west-1", 
-    "eu-west-2", 
-    "eu-west-3", 
-    "eu-central-1", 
+    "us-west-1",
+    "us-west-2",
+    "eu-west-1",
+    "eu-west-2",
+    "eu-west-3",
+    "eu-central-1",
     "eu-north-1",
     "ap-northeast-1",
     "ap-northeast-2",
@@ -188,8 +188,14 @@ variable "aws_tags" {
 
 variable "development_mode" {
   description = "Enable development for the build"
-  type = bool
-  default = false
+  type        = bool
+  default     = false
+}
+
+variable "github_token" {
+  description = "GitHub Token to use for the build"
+  type        = string
+  default     = ""
 }
 
 locals {
@@ -212,7 +218,7 @@ locals {
 
   boot_command = [
     "c<wait>",
-    "linux /casper/vmlinuz --- autoinstall ds=\"nocloud-net;seedfrom=http://{{.HTTPIP}}:{{.HTTPPort}}/\"",
+    "linux /casper/vmlinuz --- autoinstall ds=\"nocloud-net;seedfrom=http://{{.HTTPIP}}:{{.HTTPPort}}/\" hostname=${var.name}",
     "<enter><wait>",
     "initrd /casper/initrd",
     "<enter><wait>",
@@ -220,16 +226,18 @@ locals {
     "<enter>"
   ]
 
+  execute_command = "echo '${var.password}' | sudo -S env {{ .Vars }} {{ .Path }}"
+
   shutdown_command = "echo '${var.password}' | sudo -S shutdown -P now"
 
   ubuntu_version_parts = split(".", var.ubuntu_version)
   ubuntu_version_short = "${element(local.ubuntu_version_parts, 0)}.${element(local.ubuntu_version_parts, 1)}"
 
   aws_instance_prefix = var.arch == "arm64" ? "a1" : "m5"
-  aws_instance_type = var.aws_instance_type != "" ? var.aws_instance_type : "${local.aws_instance_prefix}.xlarge"
+  aws_instance_type   = var.aws_instance_type != "" ? var.aws_instance_type : "${local.aws_instance_prefix}.xlarge"
   aws_ami_filter_name = var.aws_ami_source_filter_name != "" ? var.aws_ami_source_filter_name : "ubuntu/images/*ubuntu-${local.ubuntu_version_short}-${var.arch}-server-*"
 
-  ubuntu_images_url = var.ubuntu_images_url != "" ? var.ubuntu_images_url : "https://releases.ubuntu.com/${local.ubuntu_version_short}"
+  ubuntu_images_url          = var.ubuntu_images_url != "" ? var.ubuntu_images_url : "https://releases.ubuntu.com/${local.ubuntu_version_short}"
   ubuntu_images_iso_filename = var.ubuntu_images_iso_filename != "" ? var.ubuntu_images_iso_filename : "ubuntu-${var.ubuntu_version}-live-server-${var.arch}.iso"
 
   iso_checksum = "file:${local.ubuntu_images_url}/SHA256SUMS"
@@ -242,6 +250,7 @@ locals {
     "http_proxy=${var.http_proxy}",
     "https_proxy=${var.https_proxy}",
     "no_proxy=${var.no_proxy}",
+    "GITHUB_TOKEN=${var.github_token}",
   ]
 
   vmware_vmx_source = var.source_directory != "" ? var.source_directory : "${var.name}-vmware-iso"

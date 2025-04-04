@@ -2,7 +2,11 @@
 
 set -e
 
-cast install --log-level debug --mode desktop teamdfir/sift-saltstack
+# Function to cat the files
+function cat_files {
+    cat /var/cache/cast/installer/logs/results.yaml
+}
 
-cat /var/cache/cast/installer/logs/results.yaml
-cat /var/cache/cast/installer/logs/results.yaml
+trap cat_files EXIT
+
+cast install --log-level debug --mode desktop --pre-release teamdfir/sift-saltstack

@@ -1,9 +1,9 @@
 
 source "vmware-iso" "preflight" {
-  vm_name          = "${var.name}-preflight"
-  headless         = "${var.headless}"
-  
-  guest_os_type    = "${local.guest_os_type}"
+  vm_name  = "${var.name}-preflight"
+  headless = "${var.headless}"
+
+  guest_os_type = "${local.guest_os_type}"
 
   output_directory = "${var.output_directory}/${var.name}-vmware-iso-preflight"
 
@@ -11,15 +11,16 @@ source "vmware-iso" "preflight" {
   boot_wait        = "6s"
   shutdown_command = local.shutdown_command
 
-  iso_checksum     = local.iso_checksum
-  iso_urls         = local.iso_urls
+  iso_checksum = local.iso_checksum
+  iso_urls     = local.iso_urls
 
   ssh_username           = var.username
   ssh_password           = var.password
+  ssh_port               = 2222
   ssh_pty                = false
-	ssh_timeout            = "40m"
-  ssh_handshake_attempts = 100  
-  
+  ssh_timeout            = "40m"
+  ssh_handshake_attempts = 100
+
   disk_size    = var.disk_size
   disk_type_id = var.vmware_disk_type_id
   cpus         = var.cpus
@@ -32,8 +33,8 @@ source "vmware-iso" "preflight" {
 }
 
 source "vmware-iso" "full" {
-  vm_name          = var.name
-  headless         = "${var.headless}"
+  vm_name  = var.name
+  headless = "${var.headless}"
 
   output_directory = "${var.output_directory}/${var.name}-vmware-iso-full"
 
@@ -41,15 +42,15 @@ source "vmware-iso" "full" {
   boot_wait        = "6s"
   shutdown_command = local.shutdown_command
 
-  iso_checksum     = local.iso_checksum
-  iso_urls         = local.iso_urls
+  iso_checksum = local.iso_checksum
+  iso_urls     = local.iso_urls
 
   ssh_username           = var.username
   ssh_password           = var.password
   ssh_pty                = false
-	ssh_timeout            = "60m"
-  ssh_handshake_attempts = 100  
-  
+  ssh_timeout            = "60m"
+  ssh_handshake_attempts = 100
+
   disk_size    = var.disk_size
   disk_type_id = var.vmware_disk_type_id
   cpus         = var.cpus
