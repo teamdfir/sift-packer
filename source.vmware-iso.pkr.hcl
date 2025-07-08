@@ -4,6 +4,16 @@ source "vmware-iso" "preflight" {
   headless = "${var.headless}"
 
   guest_os_type = "${local.guest_os_type}"
+  firmware      = var.arch == "arm64" ? "efi" : "bios"
+  
+  vmx_data = var.arch == "arm64" ? {
+    "virtualHW.version" = "20"
+    "vhv.enable" = "TRUE"
+    "usb.present" = "TRUE"
+    "usb:1.present" = "TRUE"
+    "usb:1.deviceType" = "hub"
+    "usb:1.port" = "1"
+  } : {}
 
   output_directory = "${var.output_directory}/${var.name}-vmware-iso-preflight"
 
@@ -23,6 +33,7 @@ source "vmware-iso" "preflight" {
 
   disk_size    = var.disk_size
   disk_type_id = var.vmware_disk_type_id
+  disk_adapter_type = var.arch == "arm64" ? "nvme" : "lsilogic"
   cpus         = var.cpus
   memory       = var.memory
 
@@ -35,6 +46,18 @@ source "vmware-iso" "preflight" {
 source "vmware-iso" "full" {
   vm_name  = var.name
   headless = "${var.headless}"
+  
+  guest_os_type = "${local.guest_os_type}"
+  firmware      = var.arch == "arm64" ? "efi" : "bios"
+  
+  vmx_data = var.arch == "arm64" ? {
+    "virtualHW.version" = "20"
+    "vhv.enable" = "TRUE"
+    "usb.present" = "TRUE"
+    "usb:1.present" = "TRUE"
+    "usb:1.deviceType" = "hub"
+    "usb:1.port" = "1"
+  } : {}
 
   output_directory = "${var.output_directory}/${var.name}-vmware-iso-full"
 
@@ -53,6 +76,7 @@ source "vmware-iso" "full" {
 
   disk_size    = var.disk_size
   disk_type_id = var.vmware_disk_type_id
+  disk_adapter_type = var.arch == "arm64" ? "nvme" : "lsilogic"
   cpus         = var.cpus
   memory       = var.memory
 

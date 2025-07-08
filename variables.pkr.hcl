@@ -237,7 +237,9 @@ locals {
   aws_instance_type   = var.aws_instance_type != "" ? var.aws_instance_type : "${local.aws_instance_prefix}.xlarge"
   aws_ami_filter_name = var.aws_ami_source_filter_name != "" ? var.aws_ami_source_filter_name : "ubuntu/images/*ubuntu-${local.ubuntu_version_short}-${var.arch}-server-*"
 
-  ubuntu_images_url          = var.ubuntu_images_url != "" ? var.ubuntu_images_url : "https://releases.ubuntu.com/${local.ubuntu_version_short}"
+  # Different base URLs for different architectures
+  ubuntu_base_url = var.arch == "arm64" ? "https://cdimage.ubuntu.com/releases/${local.ubuntu_version_short}/release" : "https://releases.ubuntu.com/${local.ubuntu_version_short}"
+  ubuntu_images_url          = var.ubuntu_images_url != "" ? var.ubuntu_images_url : local.ubuntu_base_url
   ubuntu_images_iso_filename = var.ubuntu_images_iso_filename != "" ? var.ubuntu_images_iso_filename : "ubuntu-${var.ubuntu_version}-live-server-${var.arch}.iso"
 
   iso_checksum = "file:${local.ubuntu_images_url}/SHA256SUMS"
@@ -255,5 +257,5 @@ locals {
 
   vmware_vmx_source = var.source_directory != "" ? var.source_directory : "${var.name}-vmware-iso"
 
-  guest_os_type = "ubuntu-64"
+  guest_os_type = var.arch == "arm64" ? "arm-ubuntu-64" : "ubuntu-64"
 }
