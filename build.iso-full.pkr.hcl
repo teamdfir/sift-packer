@@ -7,7 +7,7 @@ build {
     inline = [
       "mkdir -p /home/${var.username}/.config/",
       "touch /home/${var.username}/.config/gnome-initial-setup-done",
-    ]    
+    ]
   }
 
   # Stage 1 - Ubuntu Tweak Scripts
@@ -18,6 +18,7 @@ build {
     scripts = [
       "${path.root}/builtin_scripts/ubuntu/disable-aptdaily.sh",
       "${path.root}/builtin_scripts/ubuntu/system-update.sh",
+      "${path.root}/builtin_scripts/ubuntu/faster-boot.sh",
       "${path.root}/builtin_scripts/ubuntu/open-vm-tools.sh",
       "${path.root}/builtin_scripts/ubuntu/virtualbox-guest-x11.sh",
       #"${path.root}/builtin_scripts/ubuntu/setup-saltstack.sh",

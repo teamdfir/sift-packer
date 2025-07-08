@@ -13,7 +13,7 @@ locals {
 source "amazon-ebs" "full" {
   region        = var.aws_region
   source_ami    = var.aws_ami
-  instance_type = var.aws_instance_type
+  instance_type = local.aws_instance_type
 
   ssh_username = var.username
 
@@ -35,11 +35,11 @@ source "amazon-ebs" "full" {
 
   source_ami_filter {
     filters = {
-       virtualization-type = "hvm"
-       name = var.aws_ami_source_filter_name
-       root-device-type = "ebs"
+      virtualization-type = "hvm"
+      name                = local.aws_ami_filter_name
+      root-device-type    = "ebs"
     }
-    owners = var.aws_ami_source_owner
+    owners      = var.aws_ami_source_owner
     most_recent = true
   }
 

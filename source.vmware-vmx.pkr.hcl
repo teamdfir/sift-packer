@@ -9,7 +9,7 @@ source "vmware-vmx" "full" {
   output_directory = "${var.output_directory}/${var.name}"
 
   shutdown_command = local.shutdown_command
-  
+
   ssh_password     = var.password
   ssh_pty          = false
   ssh_username     = var.username
@@ -22,12 +22,12 @@ source "vmware-vmx" "full" {
 source "vmware-vmx" "update" {
   vm_name  = var.name
   headless = "${var.headless}"
-  
+
   source_path      = "${var.output_directory}/${var.name}/${var.name}.vmx"
   output_directory = "${var.output_directory}/${var.name}-update"
 
   shutdown_command = local.shutdown_command
-  
+
   ssh_password     = var.password
   ssh_pty          = false
   ssh_username     = var.username

@@ -3,7 +3,7 @@ build {
 
   provisioner "shell" {
     # Note: sudo -S env is necessary ot pass the environment variables down to each script
-    execute_command  = "echo '${var.password}' | sudo -S env {{ .Vars }} {{ .Path }}"
+    execute_command  = local.execute_command
     environment_vars = local.script_environment_variables
     scripts = [
       "${path.root}/builtin_scripts/ubuntu/disable-aptdaily.sh",
@@ -12,7 +12,7 @@ build {
   }
 
   provisioner "shell" {
-    execute_command = "echo '${var.password}' | sudo -S -E bash '{{ .Path }}'"
+    execute_command = local.execute_command
     scripts = [
       "${path.root}/custom_scripts/cast-install.sh",
       "${path.root}/custom_scripts/cast-sift.sh",
@@ -23,7 +23,7 @@ build {
   # Stage X - Sysprep Scripts (Part 2)
   # Final Scripts, the last scripts that should be run.
   provisioner "shell" {
-    execute_command = "echo '${var.password}' | sudo -S -E bash '{{ .Path }}'"
+    execute_command = local.execute_command
     scripts = [
       "${path.root}/builtin_scripts/virt-sysprep/sysprep-op-dhcp-client-state.sh",
       "${path.root}/builtin_scripts/virt-sysprep/sysprep-op-logfiles.sh",
