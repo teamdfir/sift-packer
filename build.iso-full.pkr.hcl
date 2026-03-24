@@ -28,6 +28,13 @@ build {
     ]
   }
 
+  provisioner "shell" {
+    execute_command = local.execute_command
+    inline = [
+      "sudo rm -f /etc/ssh/sshd_config.d/port.conf",
+    ]
+  }
+
   # Stage 3 - Custom Scripts
   # This section is for scripts that are added custom to the packer build not included
   # by the template, these can be anything that needs to happen to prepare the system

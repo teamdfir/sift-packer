@@ -32,7 +32,7 @@ build {
   provisioner "shell" {
     execute_command = local.execute_command
     inline = [
-      "rm -f /etc/systemd/system/ssh.socket.d/override.conf",
+      "sudo rm -f /etc/ssh/sshd_config.d/port.conf",
     ]
   }
 }

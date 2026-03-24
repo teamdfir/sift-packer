@@ -4,7 +4,20 @@ system_info:
     name: ${username}
     lock_passwd: True
     gecos: DefaultUser
-    groups: [adm, audio, cdrom, dialout, dip, floppy, lxd, netdev, plugdev, sudo, video]
+    groups:
+      [
+        adm,
+        audio,
+        cdrom,
+        dialout,
+        dip,
+        floppy,
+        lxd,
+        netdev,
+        plugdev,
+        sudo,
+        video,
+      ]
     sudo: ["ALL=(ALL) NOPASSWD:ALL"]
     shell: /bin/bash
 autoinstall:
@@ -58,11 +71,8 @@ autoinstall:
           [chooser]
 
           [debug]
-      - path: /etc/systemd/system/ssh.socket.d/override.conf
+      - path: /etc/ssh/sshd_config.d/port.conf
         content: |
-          [Socket]
-
-          ListenStream=
-          ListenStream=2222
+          Port 2222
     runcmd:
       - systemctl restart ssh.socket

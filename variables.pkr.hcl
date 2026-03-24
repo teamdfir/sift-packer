@@ -37,7 +37,7 @@ variable "arch" {
 variable "ubuntu_version" {
   description = "The version of Ubuntu to use"
   type        = string
-  default     = "24.04.2"
+  default     = "24.04.3"
 }
 
 // Note: this is so you can specifically override the ISO file, otherwise it will be calculated
